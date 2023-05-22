@@ -275,21 +275,7 @@ const Dashboard = () => {
         className="mb-3"
       >
         <Header title="DASHBOARD" subtitle="Welcome to Dashboard"/>
-        {/* <Box className="mb-3">
-          <Button
-            sx={{
-              backgroundColor: theme.palette.background.alt,
-              color: theme.palette.neutral[100],
-              fontSize: "14px",
-              fontWeight: "bold",
-              padding: "10px 20px",
-            }}
-          >
-            <DownloadOutlinedIcon sx={{ mr: "10px" }} />
-            Download Reports
-          </Button>
-        </Box> */}
-        <Box>
+        {/* <Box>
           <Button
             sx={{
               backgroundColor: theme.palette.blueAccent[600],
@@ -305,7 +291,7 @@ const Dashboard = () => {
             <DownloadOutlinedIcon sx={{ mr: "10px" }} />
             Download Reports
           </Button>
-        </Box>
+        </Box> */}
       </Box>
 
       {/* GRID & CHARTS */}
@@ -481,13 +467,13 @@ const Dashboard = () => {
                 {Number(totalRevenues).toFixed(2)} Million
               </Typography>
             </Box>
-            <Box>
+            {/* <Box>
               <IconButton>
                 <DownloadOutlinedIcon
                   sx={{ fontSize: "26px", color: theme.palette.secondary[500] }}
                 />
               </IconButton>
-            </Box>
+            </Box> */}
           </Box>
           <Box height="440px">
             <LineChart

@@ -99,7 +99,7 @@ const AdminManagementRevenues = () => {
         className="mb-3"
       >
         <Header title="REVENUES" subtitle="These Are The Revenues" />
-        <Box>
+        {/* <Box>
           <Button
             sx={{
               backgroundColor: theme.palette.blueAccent[600],
@@ -115,7 +115,7 @@ const AdminManagementRevenues = () => {
             <DownloadOutlinedIcon sx={{ mr: "10px" }} />
             Download Reports
           </Button>
-        </Box>
+        </Box> */}
       </Box>
       <Box
         m="40px"

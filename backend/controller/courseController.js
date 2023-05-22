@@ -323,6 +323,17 @@ const addLessonToChapter = asyncHandler(async (req, res) => {
     "INSERT INTO lesson(id_chapter, id_course ,name,video) values(?,?,?,?)",
     [idChapter, idCourse, name, video]
   );
+
+  const idLesson = await db.connection.execute("SELECT MAX(id) AS id_lesson FROM lesson WHERE id_chapter=? AND id_course=?", [idChapter, idCourse])
+  const users = await db.connection.execute("SELECT DISTINCT id_user FROM user_lesson_completion")
+
+  for(let i = 0; i < users[0].length; i++) {
+    const userRes = await db.connection.execute("SELECT * FROM user_lesson_completion WHERE (id_user=? AND id_course=?)", [users[0][i].id_user, idCourse])
+    if(userRes[0].length > 0) {
+      const result2 = await db.connection.execute("INSERT INTO user_lesson_completion(id_user, id_course, id_chapter, id_lesson, is_completed) VALUES(?, ?, ?, ?, ?)", [users[0][i].id_user, idCourse, idChapter, idLesson[0][0].id_lesson, 0])
+    }
+  }
+
   if (result) {
     res.status(200).json({ status: "success" });
   } else {

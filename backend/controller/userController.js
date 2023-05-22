@@ -33,6 +33,23 @@ const getUsersWithoutAdmin = asyncHandler(async (req, res) => {
 //@access Public
 
 const registerUser = asyncHandler(async (req, res) => {
+  const getCurrentDate = () => {
+    const today = new Date();
+    let year = today.getFullYear();
+    let month = today.getMonth() + 1;
+    let day = today.getDate();
+
+    // Đảm bảo rằng tháng và ngày có độ dài là 2
+    if (month < 10) {
+      month = "0" + month;
+    }
+    if (day < 10) {
+      day = "0" + day;
+    }
+
+    const currentDate = `${year}-${month}-${day}`;
+    return currentDate;
+  };
   const { fullname, username, password, email, job } = req.body;
   if (!fullname || !username || !password || !email || !job) {
     res.status(400);
@@ -55,8 +72,8 @@ const registerUser = asyncHandler(async (req, res) => {
 
   // Insert new user record into the database
   const [result] = await db.connection.execute(
-    "INSERT INTO user (fullname, username, password, email, job) VALUES (?, ?, ?, ?, ?)",
-    [fullname, username, hashedPassword, email, job]
+    "INSERT INTO user (fullname, username, password, email, job, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+    [fullname, username, hashedPassword, email, job, getCurrentDate()]
   );
 
   if (result.affectedRows === 1) {
@@ -248,7 +265,7 @@ const generateToken = (id) => {
   });
 };
 
-const forgotPassword = asyncHandler(async(req, res) => {
+const forgotPassword = asyncHandler(async (req, res) => {
   const { email } = req.body;
 
   try {
@@ -264,7 +281,9 @@ const forgotPassword = asyncHandler(async(req, res) => {
     }
 
     // Tạo mã thông báo (token) với email của người dùng
-    const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ email }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
 
     // Gửi email chứa liên kết đặt lại mật khẩu đến email người dùng
     sendResetPasswordEmail(email, token);
@@ -274,9 +293,9 @@ const forgotPassword = asyncHandler(async(req, res) => {
     console.log(error);
     res.status(500).json({ message: "Internal server error" });
   }
-})
+});
 
-const resetPassword = asyncHandler(async(req, res) => {
+const resetPassword = asyncHandler(async (req, res) => {
   const { token, newPassword } = req.body;
   try {
     // Xác thực tính hợp lệ của mã thông báo
@@ -292,17 +311,17 @@ const resetPassword = asyncHandler(async(req, res) => {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     // Cập nhật mật khẩu mới vào cơ sở dữ liệu hoặc hệ thống
-    await db.connection.execute(
-      "UPDATE user SET password=? WHERE email=?",
-      [hashedPassword, decodedToken.email]
-    );
+    await db.connection.execute("UPDATE user SET password=? WHERE email=?", [
+      hashedPassword,
+      decodedToken.email,
+    ]);
 
     res.json({ message: "Password reset successful" });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal server error" });
   }
-})
+});
 
 // Hàm gửi email chứa liên kết đặt lại mật khẩu
 const sendResetPasswordEmail = (email, token) => {
@@ -351,5 +370,5 @@ module.exports = {
   updateEnabledOfUser,
   getTotalTodayUsers,
   forgotPassword,
-  resetPassword
+  resetPassword,
 };
