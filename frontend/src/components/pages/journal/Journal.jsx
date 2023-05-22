@@ -8,12 +8,16 @@ import {
     Collapse,
     Button,
     useMediaQuery,
-    Stack
+    Stack,
+    Avatar,
+    CardHeader,
+    CardMedia
 } from "@mui/material";
 import { React, useState, useEffect } from 'react';
 import axios  from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { AddCircleOutlineOutlined } from '@mui/icons-material';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import FlexBetween from 'adminComponents/FlexBetween';
 import useDebounce from "../../../myhooks/useDebounce";
 
@@ -26,65 +30,91 @@ const Journal = ({
     end_date,
   }) => {
     const theme = useTheme();
-    const [isExpanded, setIsExpanded] = useState(false);
     
     return (
-      <Card
-        sx={{
-          backgroundImage: "none",
-          backgroundColor: theme.palette.background.alt,
-          borderRadius: "0.55rem",
-          border: "1px solid #ccc"
-        }}
-      >
-        <CardContent>
-            <Box
-                component="img"
-                alt="blog"
-                src={image}
-                height="400px"
-                width="100%"
-                borderRadius="5px"
-                sx={{ objectFit: "cover" }}
-            />
-            <Box>
-              <Typography
-                fontWeight="bold"
-                fontSize="1.7rem"
-                sx={{ color: theme.palette.secondary[100] }}
-                mt="5px"
-              >
-                {title}
-              </Typography>
-              <Stack spacing={2} direction="row">
-                <Typography
-                    fontSize="1.4rem"
-                    sx={{ color: theme.palette.secondary[100]}}
-                >
-                   Apply: {start_date} - {end_date}
-                </Typography>
-              </Stack>
-            </Box>
-            <Button
-                variant="contained"
-                size="large"
-                sx={{ color: theme.palette.secondary[100], height: "100%" }}
-                className="btns-manage-blogs-item"
-                onClick={() => setIsExpanded(!isExpanded)}
-            >
-                See More
-                </Button>
-        </CardContent>
-        <Collapse
-          in={isExpanded}
-          timeout="auto"
-          unmountOnExit
-        >
-          <CardContent>
-            <Typography sx={{fontSize: "1.4rem"}}>{description}</Typography>
-          </CardContent>
-        </Collapse>
-      </Card>
+      // <Card
+      //   sx={{
+      //     backgroundImage: "none",
+      //     backgroundColor: theme.palette.background.alt,
+      //     borderRadius: "0.55rem",
+      //     border: "1px solid #ccc"
+      //   }}
+      // >
+      //   <CardContent>
+      //       <Box
+      //           component="img"
+      //           alt="blog"
+      //           src={image}
+      //           height="400px"
+      //           width="100%"
+      //           borderRadius="5px"
+      //           sx={{ objectFit: "cover" }}
+      //       />
+      //       <Box>
+      //         <Typography
+      //           fontWeight="bold"
+      //           fontSize="1.7rem"
+      //           sx={{ color: theme.palette.secondary[100] }}
+      //           mt="5px"
+      //         >
+      //           {title}
+      //         </Typography>
+      //         <Stack spacing={2} direction="row">
+      //           <Typography
+      //               fontSize="1.4rem"
+      //               sx={{ color: theme.palette.secondary[100]}}
+      //           >
+      //              Apply: {start_date} - {end_date}
+      //           </Typography>
+      //         </Stack>
+      //       </Box>
+      //       <Button
+      //           variant="contained"
+      //           size="large"
+      //           sx={{ color: theme.palette.secondary[100], height: "100%" }}
+      //           className="btns-manage-blogs-item"
+      //           onClick={() => setIsExpanded(!isExpanded)}
+      //       >
+      //           See More
+      //           </Button>
+      //   </CardContent>
+      //   <Collapse
+      //     in={isExpanded}
+      //     timeout="auto"
+      //     unmountOnExit
+      //   >
+      //     <CardContent>
+      //       <Typography sx={{fontSize: "1.4rem"}}>{description}</Typography>
+      //     </CardContent>
+      //   </Collapse>
+      // </Card>
+      <Card sx={{ width: "100%" }}>
+      <CardHeader
+        avatar={
+          <Avatar sx={{ bgcolor: "red" }} aria-label="recipe">
+            AD
+          </Avatar>
+        }
+        action={
+          <IconButton aria-label="settings">
+            <MoreVertIcon />
+          </IconButton>
+        }
+        title={title}
+        subheader={`${start_date} - ${end_date}`}
+      />
+      <CardMedia
+        component="img"
+        height="194"
+        image={image}
+        alt="Paella dish"
+      />
+      <CardContent>
+        <Typography variant="body2" color="text.secondary">
+          {description}
+        </Typography>
+      </CardContent>
+    </Card>
     );
   };
 
@@ -133,7 +163,8 @@ const Journals = () => {
                     <Box
                         mt="20px"
                         display="grid"
-                        gridTemplateColumns="repeat(2, minmax(0, 1fr))"
+                        //gridTemplateColumns="repeat(2, minmax(0, 1fr))"
+                        gridTemplateColumns={{sx: "repeat(1, minmax(0, 1fr))", sm: "repeat(4, minmax(0, 1fr))"}}
                         justifyContent="space-between"
                         rowGap="25px"
                         columnGap="1.5%"

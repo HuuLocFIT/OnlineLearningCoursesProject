@@ -26,6 +26,8 @@ import Checkout from "./components/pages/checkout/Checkout";
 import SuccessOrder from "./components/pages/successOrder/SuccessOrder";
 import ManageLearning from "./components/pages/ManageLearning/ManageLearning";
 import ManageLearningDetail from "./components/pages/ManageLearning/ManageLearningDetail";
+import ForgotPasswordForm from "components/form/ForgotPasswordForm";
+import ResetPasswordForm from "components/form/ResetPasswordForm";
 
 import { BrowserRouter, Navigate} from "react-router-dom";
 import Dashboard from "adminPages/dashboard";
@@ -57,6 +59,8 @@ function App() {
             <Route path="/journal" element={<Journal />}></Route>
             <Route path="/contact" element={<Contact />}></Route>
             <Route path="/login" element={<SignIn />}></Route>
+            <Route path="/forgot-password" element={<ForgotPasswordForm />}></Route>
+            <Route path="/reset-password" element={<ResetPasswordForm />}></Route>
             <Route path="/signup" element={<SignUp />}></Route>
             <Route path="/teachers" element={<Teacher />}></Route>
             <Route path="/me" element={<Me />}></Route>

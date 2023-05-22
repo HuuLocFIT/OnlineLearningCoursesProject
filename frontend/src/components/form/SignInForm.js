@@ -124,13 +124,13 @@ const SignInForm = ({margin}) => {
             />
             <ButtonAuth
               type="submit"
-              className="bg-purple-400 text-white py-3 px-5 ml-auto rounded-md float-right mt-4"
+              className="bg-purple-400 text-white py-3 px-5 ml-auto rounded-md mt-4 w-full"
               // disabled={formik.isSubmitting}
             >
               Sign in
             </ButtonAuth>
-
-            <NavLink to="/signup" className="my-[20px] block text-blue-600">Create New Account</NavLink>
+            <NavLink to="/forgot-password" className="my-[5px] block text-red-700 hover:underline">Forgotten username or password</NavLink>
+            <NavLink to="/signup" className="my-[5px] block text-blue-600 text-center hover:underline">Create New Account</NavLink>
           </Form>
           
         );

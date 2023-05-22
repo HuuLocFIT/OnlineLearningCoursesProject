@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const nodemailer = require("nodemailer");
 const asyncHandler = require("express-async-handler");
 
 const db = require("../mysqldb/db");
@@ -116,13 +117,14 @@ const updateUser = asyncHandler(async (req, res) => {
   const idUser = req.params.id;
   const { fullname, username, email } = req.body;
 
-  let result = null
-  if(req.file) {
-    console.log(req.file.path)
-    const imageFile = req.file.path
+  let result = null;
+  if (req.file) {
+    console.log(req.file.path);
+    const imageFile = req.file.path;
     result = await db.connection.execute(
       "UPDATE user SET fullname = ?, username = ?, email = ?, image=? WHERE id = ?",
-      [fullname, username, email, imageFile, idUser])
+      [fullname, username, email, imageFile, idUser]
+    );
   } else {
     result = await db.connection.execute(
       "UPDATE user SET fullname = ?, username = ?, email = ? WHERE id = ?",
@@ -157,7 +159,7 @@ const deleteUser = asyncHandler(async (req, res) => {
 const getUserById = asyncHandler(async (req, res) => {
   const idUser = req.params.id;
 
-  console.log(idUser)
+  console.log(idUser);
 
   const user = await db.connection.execute("SELECT * FROM user WHERE id=?", [
     idUser,
@@ -185,12 +187,10 @@ const loginUser = asyncHandler(async (req, res) => {
   const user = result[0][0];
 
   if (!user.is_enabled) {
-    res
-      .status(400)
-      .json({
-        message:
-          "Login failed. Your account is disabled now. Please contact with us to receive support!",
-      });
+    res.status(400).json({
+      message:
+        "Login failed. Your account is disabled now. Please contact with us to receive support!",
+    });
   }
 
   if (user && (await bcrypt.compare(password, user.password))) {
@@ -228,20 +228,113 @@ const getMe = asyncHandler(async (req, res) => {
 });
 
 const getTotalTodayUsers = asyncHandler(async (req, res) => {
-  const nowDate = req.query.date
+  const nowDate = req.query.date;
 
-  const result = await db.connection.execute("SELECT COUNT(id) AS total FROM user WHERE created_at=?", [nowDate])
+  const result = await db.connection.execute(
+    "SELECT COUNT(id) AS total FROM user WHERE created_at=?",
+    [nowDate]
+  );
 
-  if(result) {
-    res.status(200).json(result[0][0].total)
+  if (result) {
+    res.status(200).json(result[0][0].total);
   } else {
-    res.status(404)
+    res.status(404);
   }
-})
+});
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: "30d",
+  });
+};
+
+const forgotPassword = asyncHandler(async(req, res) => {
+  const { email } = req.body;
+
+  try {
+    // Kiểm tra xem email có tồn tại trong cơ sở dữ liệu hoặc hệ thống không
+    const user = await db.connection.execute(
+      "SELECT * FROM user WHERE email=?",
+      [email]
+    );
+
+    if (!user[0] || user[0].length === 0) {
+      res.status(400).json({ message: "Email does not exist" });
+      return;
+    }
+
+    // Tạo mã thông báo (token) với email của người dùng
+    const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
+    // Gửi email chứa liên kết đặt lại mật khẩu đến email người dùng
+    sendResetPasswordEmail(email, token);
+
+    res.json({ message: "Reset password email sent" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+})
+
+const resetPassword = asyncHandler(async(req, res) => {
+  const { token, newPassword } = req.body;
+  try {
+    // Xác thực tính hợp lệ của mã thông báo
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Kiểm tra xem mã thông báo có hợp lệ và chưa hết hạn hay không
+    if (!decodedToken.email) {
+      res.status(400).json({ message: "Invalid token" });
+      return;
+    }
+
+    // Hash mật khẩu mới
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Cập nhật mật khẩu mới vào cơ sở dữ liệu hoặc hệ thống
+    await db.connection.execute(
+      "UPDATE user SET password=? WHERE email=?",
+      [hashedPassword, decodedToken.email]
+    );
+
+    res.json({ message: "Password reset successful" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+})
+
+// Hàm gửi email chứa liên kết đặt lại mật khẩu
+const sendResetPasswordEmail = (email, token) => {
+  const transporter = nodemailer.createTransport({
+    // Cấu hình email transport (SMTP, Gmail, v.v.)
+    // Ví dụ: sử dụng Gmail SMTP
+    service: "gmail",
+    auth: {
+      user: "nguyenhuuloc7654@gmail.com",
+      pass: "uyyseekmpbsmvada",
+    },
+  });
+
+  const resetUrl = `http://localhost:3000/reset-password?token=${token}`;
+
+  const mailOptions = {
+    from: "nguyenhuuloc7654@gmail.com",
+    to: email,
+    subject: "Reset Password",
+    html: `
+      <h1>Reset Password</h1>
+      <p>You have requested to reset your password. Please click the following link to reset your password:</p>
+      <a href="${resetUrl}">Reset Password</a>
+      `,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log("Error sending email:", error);
+    } else {
+      console.log("Email sent:", info.response);
+    }
   });
 };
 
@@ -256,5 +349,7 @@ module.exports = {
   getUsersWithoutAdmin,
   updateStatusOfUser,
   updateEnabledOfUser,
-  getTotalTodayUsers
+  getTotalTodayUsers,
+  forgotPassword,
+  resetPassword
 };

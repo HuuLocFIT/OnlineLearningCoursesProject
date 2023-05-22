@@ -13,13 +13,17 @@ const {
   getUsersWithoutAdmin,
   updateStatusOfUser,
   updateEnabledOfUser,
-  getTotalTodayUsers
+  getTotalTodayUsers,
+  forgotPassword,
+  resetPassword
 } = require("../controller/userController");
 
 // const {protect} = require('../middleware/authMiddleware')
 
 router.post("/", registerUser);
 router.post("/login", loginUser);
+router.post("/forgot-password", forgotPassword)
+router.post("/reset-password", resetPassword)
 router.route("/total-users?").get(getTotalTodayUsers)
 // router.get("/me", protect, getMe);
 router.get("/me", getMe);
