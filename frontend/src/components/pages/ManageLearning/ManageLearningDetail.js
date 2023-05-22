@@ -419,10 +419,7 @@ const ManageLearningDetail = () => {
                 </div>
               </div>
               <h2 className="font-semibold text-[16px] py-[12px] px-[16px] flex justify-between">
-                <span>Nội dung khóa học</span>
-                <span className=" w-[30px] h-[30px] rounded-full border border-[#ccc] inline-flex items-center justify-center cursor-pointer">
-                  <FontAwesomeIcon icon={faPlus} />
-                </span>
+                <span className="text-xl">Nội dung khóa học</span>
               </h2>
               <ul className="h-[370px] overflow-x-hidden overflow-y-auto">
                 {loadingChapter && <Loading width={"30px"} height={"30px"} />}

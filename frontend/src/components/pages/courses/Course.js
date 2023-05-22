@@ -6,7 +6,7 @@ import {
   faStar,
 } from "@fortawesome/free-solid-svg-icons";
 import { faStar as regularStar } from "@fortawesome/free-regular-svg-icons";
-import Rating from "react-rating";
+import { Rating } from "@mui/material";
 import axios from "axios";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useRef } from "react";
@@ -93,7 +93,7 @@ const Course = () => {
   // Lấy totalPages để phân trang
   useEffect(() => {
     const timer = setTimeout(() => {
-      if(searchQuery !== "") {
+      if (searchQuery !== "") {
         getAllCourse(searchValueDebounce).then((result) => {
           setTotalPages(result.totalPages);
         });
@@ -102,7 +102,7 @@ const Course = () => {
           setTotalPages(result);
         });
       }
-    }, 500)
+    }, 500);
 
     return () => {
       clearTimeout(timer);
@@ -119,7 +119,6 @@ const Course = () => {
         setCourses(result.data);
         setLoading(false);
       });
-      
     }, 500);
     return () => {
       clearTimeout(timer);
@@ -175,15 +174,17 @@ const Course = () => {
   const formatCurrency = (value) => {
     // Kiểm tra nếu value không phải là số
     if (isNaN(value)) {
-      return 'Invalid value';
+      return "Invalid value";
     }
-  
+
     // Chuyển đổi giá trị sang số và làm tròn đến 0 chữ số thập phân
     const amount = Number(value).toFixed(0);
-  
+
     // Chuyển đổi thành chuỗi và thêm dấu phân tách hàng nghìn
-    const formattedAmount = amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  
+    const formattedAmount = amount
+      .toString()
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
     // Thêm đơn vị tiền tệ (đơn vị và ký hiệu bạn có thể thay đổi tùy ý)
     return `${formattedAmount} VNĐ`;
   };
@@ -238,22 +239,25 @@ const Course = () => {
                     {course.name}
                   </NavLink>
                   <div className="mt-[12px] mt-auto">
-                    <div>
-                      <span className="text-yellow-900 mr-2 text-xl items-center">{course.rating}</span>
+                    <div className="flex items-center">
+                      <span className="text-yellow-900 mr-2 text-xl items-center">
+                        {course.rating}
+                      </span>
                       <Rating
-                        initialRating={Math.ceil(course.rating)}
-                        emptySymbol={
-                          <FontAwesomeIcon
-                            icon={regularStar}
-                            className="text-yellow-600"
-                          />
-                        }
-                        fullSymbol={
-                          <FontAwesomeIcon
-                            icon={faStar}
-                            className="text-yellow-600"
-                          />
-                        }
+                        value={course.rating}
+                        // initialRating={Math.ceil(course.rating)}
+                        // emptySymbol={
+                        //   <FontAwesomeIcon
+                        //     icon={regularStar}
+                        //     className="text-yellow-600"
+                        //   />
+                        // }
+                        // fullSymbol={
+                        //   <FontAwesomeIcon
+                        //     icon={faStar}
+                        //     className="text-yellow-600"
+                        //   />
+                        // }
                         readonly
                       />
                     </div>

@@ -72,7 +72,6 @@ const ManageTeaching = () => {
     setOpenDeleteModal(false);
   };
   const { user } = useSelector((state) => state.auth);
-  console.log(user._id);
   const getMyCourse = async (id) => {
     const response = await axios.get(
       `http://localhost:5000/api/courses/mycourse/${id}`

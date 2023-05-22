@@ -108,23 +108,23 @@ const Header = () => {
 
         <div className="header-contact-social flex justify-end gap-2 items-center">
           <div className="header-contact-social-item w-10 h-10 rounded-full bg-[#c9c9c933] flex items-center justify-center text-[var(--primary-color)]">
-            <a href="https://www.facebook.com/nguyeen.huu.khai" target="_blank">
+            <a href="https://www.facebook.com/nguyenhuuloc2310/" target="_blank">
                 <FontAwesomeIcon icon={faFacebookF} />
             </a>
             
           </div>
           <div className="header-contact-social-item w-10 h-10 rounded-full bg-[#c9c9c933] flex items-center justify-center text-[var(--primary-color)]">
-            <a href="https://www.facebook.com/nguyeen.huu.khai" target="_blank">
+            <a href="https://www.facebook.com/nguyenhuuloc2310/" target="_blank">
                 <FontAwesomeIcon icon={faTwitter} />
             </a>
           </div>
           <div className="header-contact-social-item w-10 h-10 rounded-full bg-[#c9c9c933] flex items-center justify-center text-[var(--primary-color)]">
-            <a href="https://www.facebook.com/nguyeen.huu.khai" target="_blank">
+            <a href="https://www.facebook.com/nguyenhuuloc2310/" target="_blank">
                 <FontAwesomeIcon icon={faInstagram} />
             </a>
           </div>
           <div className="header-contact-social-item w-10 h-10 rounded-full bg-[#c9c9c933] flex items-center justify-center text-[var(--primary-color)]">
-            <a href="https://www.facebook.com/nguyeen.huu.khai" target="_blank">
+            <a href="https://www.facebook.com/nguyenhuuloc2310/" target="_blank">
                 <FontAwesomeIcon icon={faDribbble} />
             </a>
           </div>

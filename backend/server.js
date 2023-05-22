@@ -30,10 +30,11 @@ app.use(morgan("common"));
 app.use("/api/courses", require("./routes/courseRouters"));
 app.use("/api/users", require("./routes/userRouters"));
 app.use("/api/goals", require("./routes/goalRouters"));
-app.use("/api/team", require('./routes/teamRouters'));
+app.use("/api/teachers", require('./routes/teacherRouters'));
 app.use("/api/lessons", require('./routes/lessonRouter'));
 app.use("/api/search", require('./routes/searchRouter'))
 app.use("/api/blogs", require("./routes/blogRouters"));
+app.use("/api/orders", require("./routes/orderRouter"));
 app.use(errorHandler);
 
 // ROUTES

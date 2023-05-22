@@ -2,6 +2,7 @@ import {Form, Formik, useField } from "formik";
 import React from "react";
 import * as Yup from "yup";
 import styled from 'styled-components'
+import axios from "axios";
 
 import {useEffect} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
@@ -42,6 +43,12 @@ const SignInForm = ({margin}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const {user, isLoading, isError, isSuccess, message} = useSelector((state) => state.auth)
+
+  const updateStatusOfUser = async() => {
+    const response = await axios.put(`http://localhost:5000/api/users/status/${user._id}/1`)
+    return response.data
+  }
+
   useEffect(()=>{
     if(isError) {
       toast.error(message)
@@ -53,6 +60,8 @@ const SignInForm = ({margin}) => {
       } else {
         navigate('/')
       }
+      // update status of user when login
+      updateStatusOfUser();
     }
     dispatch(reset())
   },[user,isLoading,isError,isSuccess,message, navigate, dispatch])

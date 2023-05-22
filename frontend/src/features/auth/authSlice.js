@@ -40,13 +40,40 @@ export const login = createAsyncThunk("auth/login", async (user, thunkAPI) => {
     return thunkAPI.rejectWithValue(message);
   }
 });
-// Update user
+//Update user
+// export const update = createAsyncThunk(
+//   "auth/update",
+//   async (infoUpdate, thunkAPI) => {
+//     try {
+//       const {userChange, id} = infoUpdate
+//       return await authService.update(userChange, id);
+//     } catch (error) {
+//       const message =
+//         (error.response &&
+//           error.response.data &&
+//           error.response.data.message) ||
+//         error.message ||
+//         error.toString();
+//       return thunkAPI.rejectWithValue(message);
+//     }
+//   }
+// );
+
 export const update = createAsyncThunk(
   "auth/update",
   async (infoUpdate, thunkAPI) => {
     try {
-      const {userChange, id} = infoUpdate
-      return await authService.update(userChange, id);
+      const { userChange, id } = infoUpdate;
+      const formData = new FormData();
+      formData.append("fullname", userChange.fullname);
+      formData.append("username", userChange.username);
+      formData.append("email", userChange.email);
+
+      if(userChange.image) {
+        formData.append("image", userChange.image);
+        console.log("IMAGE: " + userChange.image)
+      }
+      return await authService.update(formData, id);
     } catch (error) {
       const message =
         (error.response &&
@@ -58,6 +85,7 @@ export const update = createAsyncThunk(
     }
   }
 );
+
 
 
 // Logout user

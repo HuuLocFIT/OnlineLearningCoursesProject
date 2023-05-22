@@ -2,6 +2,7 @@ import { faArrowRightFromBracket, faBars, faCartShopping, faGraduationCap, faSea
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { NavLink, useMatch, useResolvedPath } from "react-router-dom";
+import axios from "axios";
 
 import styled from "styled-components";
 import Button from "../common/Button";
@@ -9,6 +10,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { logout, reset } from "../../features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
 import Cart from "../cart/Cart";
+import UserAvatar from "adminComponents/UserAvatar";
 
 const StyledNavbarWrapper = styled.div`
   display: flex;
@@ -160,8 +162,13 @@ const NavBar = ({ onClick }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
 
+  const updateStatusOfUser = async() => {
+    const response = await axios.put(`http://localhost:5000/api/users/status/${user._id}/0`)
+    return response.data
+  }
+
   const onLogout = () => {
-    console.log(1);
+    updateStatusOfUser();
     dispatch(logout());
     dispatch(reset());
     navigate("/");
@@ -179,7 +186,7 @@ const NavBar = ({ onClick }) => {
           <CustomLink to="/about">About</CustomLink>
           <CustomLink to="/contact">Contact</CustomLink>
           <CustomLink to="/journal">Journal</CustomLink>
-          <CustomLink to="/team">Team</CustomLink>
+          {/* <CustomLink to="/team">Team</CustomLink> */}
           <CustomLink to="/teachers">Teachers</CustomLink>
         </ul>
       </div>
@@ -208,13 +215,20 @@ const NavBar = ({ onClick }) => {
           <div className="relative flex justify-between items-center">
             
             <div className="avatar-user-box w-[40px] h-[40px] rounded-full bg-[var(--primary-color)] mr-3">
-              <NavLink className="avatar-user-link">
-                <img
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtP0v8NPq0_gfdDiu-nOn210pFSFsfKn1PnXF5NvMvP-IbENLdjP3Vdc2g9OQVbLdtGYE&usqp=CAU"
-                  alt=""
-                  className="w-full h-full object-cover rounded-full avatar-user-image"
+              {user.image ? (
+                 <NavLink className="avatar-user-link">
+                 <img
+                   src={user.image}
+                   alt=""
+                   className="w-full h-full object-cover rounded-full avatar-user-image"
+                 />
+               </NavLink>
+              ) : (
+                <UserAvatar
+                  username={user.username}
+                  sx={{ height: "40px", width: "40px" }}
                 />
-              </NavLink>
+              )}
               <div className="menu-user bg-white absolute -bottom-full left-1/2 -translate-x-1/2 translate-y-3/4 rounded-sm shadow-md w-[200px]">
                 <div className="border-b-2 py-2 px-3 w-full flex justify-between items-center">
                   <NavLink to="/me" className="text-base menu-user-link">Quản lý tài khoản</NavLink>

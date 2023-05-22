@@ -23,25 +23,18 @@ import {
   ManageAccountsOutlined,
   ReceiptLongOutlined,
   SavingsOutlined,
-  SaveAsOutlined 
+  SaveAsOutlined,
 } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import UserAvatar from "./UserAvatar";
 import FlexBetween from "./FlexBetween";
-import profileImage from "../assets/img/user/user_01.jpg"
+import profileImage from "../assets/img/user/user_01.jpg";
 
 const navItems = [
   {
     text: "Dashboard",
     icon: <HomeOutlined />,
-  },
-  {
-    text: "Statistics",
-    icon: null,
-  },
-  {
-    text: "Performance",
-    icon: <TrendingUpOutlined />,
   },
   {
     text: "Management",
@@ -56,7 +49,7 @@ const navItems = [
     icon: <SchoolOutlined />,
   },
   {
-    text: "Revenue",
+    text: "Revenues",
     icon: <SavingsOutlined />,
   },
   {
@@ -69,9 +62,8 @@ const navItems = [
   },
   {
     text: "Edit Profile",
-    icon: <ModeEditOutlineOutlined/>,
+    icon: <ModeEditOutlineOutlined />,
   },
-  
 ];
 
 const Sidebar = ({
@@ -114,7 +106,7 @@ const Sidebar = ({
               <FlexBetween color={theme.palette.secondary.main}>
                 <Box display="flex" alignItems="center" gap="0.5rem">
                   <Typography variant="h4" fontWeight="bold">
-                    ECOMVISION
+                    ADMIN PAGE
                   </Typography>
                 </Box>
                 {!isNoneMobile && (
@@ -135,9 +127,14 @@ const Sidebar = ({
                 }
 
                 let lcText = text.toLowerCase();
-                if(lcText === 'accounts' || lcText === 'courses' || lcText === 'revenue' || lcText === 'blogs') {
+                if (
+                  lcText === "accounts" ||
+                  lcText === "courses" ||
+                  lcText === "revenues" ||
+                  lcText === "blogs"
+                ) {
                   lcText = "management-" + text.toLowerCase();
-                } else if(lcText === 'edit profile') {
+                } else if (lcText === "edit profile") {
                   lcText = "management-profile/edit-profile";
                 }
 
@@ -181,18 +178,29 @@ const Sidebar = ({
             </List>
           </Box>
 
-          <Box bottom="2rem" className="sidebar-profile-bottom">
+          {/* <Box bottom="2rem" className="sidebar-profile-bottom">
             <Divider />
-            <FlexBetween textTransform="none" gap="1rem" m="1rem 2rem 1rem 1.5rem">
-              <Box
-                component="img"
-                alt="profile"
-                src={profileImage}
-                height="40px"
-                width="40px"
-                borderRadius="50%"
-                sx={{ objectFit: "cover" }}
-              />
+            <FlexBetween
+              textTransform="none"
+              gap="1rem"
+              m="1rem 2rem 1rem 2rem"
+            >
+              {user.image ? (
+                <Box
+                  component="img"
+                  alt="profile"
+                  src={user.image}
+                  height="40px"
+                  width="40px"
+                  borderRadius="50%"
+                  sx={{ objectFit: "cover" }}
+                />
+              ) : (
+                <UserAvatar
+                  username={user.username}
+                  sx={{ height: "40px", width: "40px" }}
+                />
+              )}
               <Box textAlign="left">
                 <Typography
                   fontWeight="bold"
@@ -215,7 +223,7 @@ const Sidebar = ({
                 }}
               />
             </FlexBetween>
-          </Box>
+          </Box> */}
         </Drawer>
       )}
     </Box>

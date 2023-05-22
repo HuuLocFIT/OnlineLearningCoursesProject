@@ -26,7 +26,7 @@ const countAllCourses = asyncHandler(async (req, res) => {
 
 const getCourses = asyncHandler(async (req, res) => {
   const { page } = req.query;
-  const size = 6;
+  const size = 8;
   const offset = (page - 1) * size;
   const limit = size;
 
@@ -95,6 +95,7 @@ const updateCourses = asyncHandler(async (req, res) => {
     res.status(200).json({ status: "success" });
   }
 });
+
 const deleteCourses = asyncHandler(async (req, res) => {
   const id = req.params.id;
   let result = null;
@@ -399,33 +400,77 @@ const checkOwnCourse = asyncHandler(async (req, res) => {
 });
 
 const makePaymentCourse = asyncHandler(async (req, res) => {
-  const list_idCourse = req.body;
+  const getCurrentDate = () => {
+    const today = new Date();
+    let year = today.getFullYear();
+    let month = today.getMonth() + 1;
+    let day = today.getDate();
+
+    // Đảm bảo rằng tháng và ngày có độ dài là 2
+    if (month < 10) {
+      month = "0" + month;
+    }
+    if (day < 10) {
+      day = "0" + day;
+    }
+
+    const currentDate = `${year}-${month}-${day}`;
+    return currentDate;
+  };
+
+  const list_courses = req.body;
   const idStudent = req.params.idStudent;
-  const list_response = list_idCourse.map(async (idCourse) => {
-    let result = await db.connection.execute(
-      "INSERT INTO user_course(id_user,id_course) values(?,?)",
-      [`${idStudent}`, `${idCourse}`]
+  let sumPrice = 0;
+  let idOrder = ""
+  let isSuccess = true
+
+  // Add into order
+  let isSuccessResponse = await db.connection.execute("INSERT INTO orders(id_user, created_at) VALUES(?, ?)", [idStudent, getCurrentDate()])
+  if(isSuccessResponse) {
+    // Get id order
+    const idOrderResponse = await db.connection.execute("SELECT MAX(id) AS id_order FROM orders");
+    idOrder = idOrderResponse[0][0].id_order;
+    console.log(idOrder);
+  } else {
+    isSuccess = false;
+  }
+
+  const list_response = list_courses.map(async (course) => {
+    sumPrice += course.price;
+
+    isSuccess = await db.connection.execute(
+      "INSERT INTO user_course(id_user, id_course) values(?, ?)",
+      [`${idStudent}`, `${course.id}`]
     );
+
+    // Add into order detail
+    isSuccess = await db.connection.execute("INSERT INTO order_detail(id_order, id_course, price) VALUES (?, ?, ?)", [idOrder, course.id, course.price])
+
     const lessons = await db.connection.execute(
       `SELECT * FROM lesson WHERE id_course=?`,
-      [idCourse]
+      [course.id]
     );
+
     if (lessons) {
       for (let i = 0; i < lessons[0].length; i++) {
         const idChapter = lessons[0][i].id_chapter;
         const idLesson = lessons[0][i].id;
 
-        result = await db.connection.execute(
+        isSuccess = await db.connection.execute(
           `INSERT INTO user_lesson_completion(id_user, id_course, id_chapter, id_lesson, is_completed) values(?, ?, ?, ?, ?)`,
-          [idStudent, idCourse, idChapter, idLesson, 0]
+          [idStudent, course.id, idChapter, idLesson, 0]
         );
       }
     }
 
-    return result;
+    return isSuccess;
   });
-  for (let i = 0; i < list_idCourse.length; i++) {
-    if (!list_idCourse[i]) {
+
+  // Update sum_price from order
+  isSuccess = await db.connection.execute("UPDATE orders SET sum_price=? WHERE id=?", [sumPrice, idOrder])
+
+  for (let i = 0; i < list_courses.length; i++) {
+    if (!list_courses[i] && !isSuccess) {
       res.status(400).json({ status: "Fail" });
       return;
     }

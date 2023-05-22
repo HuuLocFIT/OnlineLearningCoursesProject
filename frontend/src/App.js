@@ -33,6 +33,7 @@ import Performance from "adminPages/performance";
 import AdminManagementCourses from "adminPages/managementCourses";
 import AdminManagementAccounts from "adminPages/managementAccounts";
 import AdminManagementRevenue from "adminPages/managementRevenue";
+import RevenueDetail from "adminPages/managementRevenue/RevenueDetail";
 import AdminManagementBlogs from "adminPages/managementBlogs/viewMyBlogs";
 import AdminAddBlog from "adminPages/managementBlogs/addBlog";
 import AdminEditBlog from "adminPages/managementBlogs/editBlog";
@@ -52,7 +53,7 @@ function App() {
             <Route path="/courses" element={<Course />}></Route>
             <Route path="/courses/:id" element={<DetailCourse />}></Route>
             <Route path="/about" element={<About />}></Route>
-            <Route path="/team" element={<Team />}></Route>
+            {/* <Route path="/team" element={<Team />}></Route> */}
             <Route path="/journal" element={<Journal />}></Route>
             <Route path="/contact" element={<Contact />}></Route>
             <Route path="/login" element={<SignIn />}></Route>
@@ -73,7 +74,8 @@ function App() {
             <Route path="/performance" element={<Performance/>}/> 
             <Route path="/management-courses" element={<AdminManagementCourses/>}/>
             <Route path="/management-accounts" element={<AdminManagementAccounts/>}/>
-            <Route path="/management-revenue" element={<AdminManagementRevenue/>}/>
+            <Route path="/management-revenues" element={<AdminManagementRevenue/>}/>
+            <Route path="/management-revenues/details/:idOrder/:idUser" element={<RevenueDetail/>}/>
             <Route path="/management-blogs" element={<AdminManagementBlogs/>}/>
             <Route path="/management-blogs/add-blog" element={<AdminAddBlog/>}/>
             <Route path="/management-blogs/edit-blog/:id" element={<AdminEditBlog/>}/>

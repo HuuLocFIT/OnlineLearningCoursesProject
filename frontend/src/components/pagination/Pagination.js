@@ -17,7 +17,6 @@ const Pagination = ({ totalPages, page, onClickOtherPage }) => {
     }
   };
   
-  console.log("Total: " + totalPages)
   return (
     <div className="my-[40px]">
       {/* <ul className="flex justify-center gap-x-3">

@@ -39,7 +39,40 @@ export const tokensDark = {
     700: "#997d3d",
     800: "#665429",
     900: "#332a14",
-  }
+  },
+  greenAccent: {
+    100: "#dbf5ee",
+    200: "#b7ebde",
+    300: "#94e2cd",
+    400: "#70d8bd",
+    500: "#4cceac",
+    600: "#3da58a",
+    700: "#2e7c67",
+    800: "#1e5245",
+    900: "#0f2922",
+  },
+  redAccent: {
+    100: "#f8dcdb",
+    200: "#f1b9b7",
+    300: "#e99592",
+    400: "#e2726e",
+    500: "#db4f4a",
+    600: "#af3f3b",
+    700: "#832f2c",
+    800: "#58201e",
+    900: "#2c100f",
+  },
+  blueAccent: {
+    100: "#e1e2fe",
+    200: "#c3c6fd",
+    300: "#a4a9fc",
+    400: "#868dfb",
+    500: "#6870fa",
+    600: "#535ac8",
+    700: "#3e4396",
+    800: "#2a2d64",
+    900: "#151632",
+  },
 };
 
 // function that reverses the color palette
@@ -80,6 +113,18 @@ export const themeSettings = (mode) => {
               ...tokensDark.grey,
               main: tokensDark.grey[500],
             },
+            redAccent: {
+              ...tokensDark.redAccent,
+              main: tokensDark.redAccent[500]
+            },
+            greenAccent: {
+              ...tokensDark.greenAccent,
+              main: tokensDark.greenAccent[500]
+            },
+            blueAccent: {
+              ...tokensDark.blueAccent,
+              main: tokensDark.blueAccent[500]
+            },
             background: {
               default: tokensDark.primary[600],
               alt: tokensDark.primary[500],
@@ -100,6 +145,21 @@ export const themeSettings = (mode) => {
             neutral: {
               ...tokensLight.grey,
               main: tokensDark.grey[500],
+            },
+            redAccent: {
+              ...tokensLight.redAccent,
+              main: tokensDark.redAccent[600],
+              light: tokensLight.redAccent[700]
+            },
+            greenAccent: {
+              ...tokensLight.greenAccent,
+              main: tokensDark.greenAccent[600],
+              light: tokensLight.greenAccent[700]
+            },
+            blueAccent: {
+              ...tokensLight.blueAccent,
+              main: tokensDark.blueAccent[600],
+              light: tokensLight.blueAccent[700]
             },
             background: {
               default: tokensDark.grey[0],

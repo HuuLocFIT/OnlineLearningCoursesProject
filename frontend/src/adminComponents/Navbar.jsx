@@ -13,6 +13,7 @@ import { useDispatch } from "react-redux";
 import { setMode } from "adminState";
 import profileImage from "../assets/img/user/user_01.jpg";
 import { logout, reset } from "../features/auth/authSlice";
+import UserAvatar from "./UserAvatar";
 
 import {
   AppBar,
@@ -35,11 +36,12 @@ const Navbar = ({ user, isSidebarOpen, setIsSidebarOpen }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const isOpen = Boolean(anchorEl);
 
-  const handleClick = (event) => setAnchorEl(event.currentTarget);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  }
   const handleClose = () => setAnchorEl(null);
 
   const onLogout = () => {
-    console.log(1);
     dispatch(logout());
     dispatch(reset());
     navigate("/");
@@ -96,15 +98,23 @@ const Navbar = ({ user, isSidebarOpen, setIsSidebarOpen }) => {
                 gap: "1rem",
               }}
             >
-              <Box
-                component="img"
-                alt="profile"
-                src={profileImage}
-                height="32px"
-                width="32px"
-                borderRadius="50%"
-                sx={{ objectFit: "cover" }}
-              />
+              {user.image ? (
+                <Box
+                  component="img"
+                  alt="profile"
+                  src={user.image}
+                  height="32px"
+                  width="32px"
+                  borderRadius="50%"
+                  sx={{ objectFit: "cover" }}
+                />
+              ) : (
+                <UserAvatar
+                  username={user.username}
+                  sx={{ height: "32px", width: "32px" }}
+                />
+              )}
+
               <Box textAlign="left">
                 <Typography
                   fontWeight="bold"

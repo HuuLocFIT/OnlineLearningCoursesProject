@@ -16,6 +16,7 @@ import Header from "adminComponents/Header";
 import axios from "axios";
 import useDebounce from "../../myhooks/useDebounce";
 import FlexBetween from "adminComponents/FlexBetween";
+import Pagination from "components/pagination/Pagination";
 
 const AdminManagementCourse = ({
   id,
@@ -60,7 +61,7 @@ const AdminManagementCourse = ({
               fontSize="0.8rem"
               sx={{ color: theme.palette.secondary[200] }}
             >
-             Price: {price} VND
+              Price: {price} VND
             </Typography>
           </Box>
         </FlexBetween>
@@ -95,31 +96,47 @@ const AdminManagementCourse = ({
 };
 
 const AdminManagementCourses = () => {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const searchValueDebounce = useDebounce(searchQuery, 1000);
 
-  const allCourses = async (queryString) => {
+  const allCourses = async () => {
     setLoading(true);
     const response = await axios.get(
-      `http://localhost:5000/api/search/course?nameCourse=${queryString}`
+      `http://localhost:5000/api/courses?page=${page}`
     );
     return response.data;
   };
 
   useEffect(() => {
-    setLoading(true);
-    const timer = setTimeout(() => {
-      allCourses(searchValueDebounce).then((result) => {
-        setCourses(result);
-        setLoading(false);
-      });
-    }, 500);
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [searchValueDebounce]);
+    allCourses().then((result) => {
+      setCourses(result.data);
+      setTotalPages(result.totalPages);
+    });
+  }, [page]);
+
+  const handleLoadOtherPage = (newPage) => {
+    setPage(newPage);
+  };
+
+  const formatCurrency = (value) => {
+    // Kiểm tra nếu value không phải là số
+    if (isNaN(value)) {
+      return "Invalid value";
+    }
+
+    // Chuyển đổi giá trị sang số và làm tròn đến 0 chữ số thập phân
+    const amount = Number(value).toFixed(0);
+
+    // Chuyển đổi thành chuỗi và thêm dấu phân tách hàng nghìn
+    const formattedAmount = amount
+      .toString()
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+    // Thêm đơn vị tiền tệ (đơn vị và ký hiệu bạn có thể thay đổi tùy ý)
+    return `${formattedAmount} VNĐ`;
+  };
 
   const isNoneMobile = useMediaQuery("(min-width: 1000px)");
   return (
@@ -138,15 +155,7 @@ const AdminManagementCourses = () => {
           }}
         >
           {courses.map(
-            ({
-                id,
-                id_author,
-                name,
-                image,
-                description,
-                rating,
-                price,
-            }) => (
+            ({ id, id_author, name, image, description, rating, price }) => (
               <AdminManagementCourse
                 key={id}
                 id={id}
@@ -163,6 +172,11 @@ const AdminManagementCourses = () => {
       ) : (
         <>Loading...</>
       )}
+      <Pagination
+        onClickOtherPage={handleLoadOtherPage}
+        totalPages={totalPages}
+        page={page}
+      />
     </Box>
   );
 };

@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import * as Yup from "yup";
 import { Form, Formik, useField } from "formik";
-import { useSelector, useDispatch} from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { reset, logout, update } from "../../../features/auth/authSlice";
 import axios from "axios";
-import {toast} from 'react-toastify'
-import {useNavigate} from 'react-router-dom'
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import UserAvatar from "adminComponents/UserAvatar";
+
 const API_URL_ME = "http://localhost:5000/api/users/me/";
 const API_URL_USER = "http://localhost:5000/api/users/";
 
@@ -30,25 +32,25 @@ const StyledMeContainer = styled.div`
   }
 
   @media screen and (max-width: 767px) {
-    .profile-container{
+    .profile-container {
       grid-template-columns: 1fr;
       margin-right: 20px;
     }
-    .information-account-wrapper{
+    .information-account-wrapper {
       margin-top: 20px;
     }
-    .form-item{
+    .form-item {
       width: 100%;
     }
-    .form-wrapper{
+    .form-wrapper {
       margin-left: 0;
     }
-    .information-account-heading{
+    .information-account-heading {
       text-align: center;
       margin-left: 0;
       padding-bottom: 20px;
     }
-    .btn-save-profile{
+    .btn-save-profile {
       align-self: center;
       margin-left: 0;
       min-width: 100px;
@@ -56,14 +58,14 @@ const StyledMeContainer = styled.div`
   }
 
   @media screen and (max-width: 350px) {
-    .profile-img-box{
+    .profile-img-box {
       width: 200px;
       height: 200px;
     }
   }
 `;
 
-const MyInput = ({ label,change, loading, ...props }) => {
+const MyInput = ({ label, change, loading, ...props }) => {
   const [field, meta, helpers] = useField(props);
   return (
     <div className="flex flex-col relative">
@@ -75,15 +77,11 @@ const MyInput = ({ label,change, loading, ...props }) => {
       </label>
       <input
         {...props}
-        
         {...field}
-        onChange = {(e)=>{
+        onChange={(e) => {
           field.onChange(e);
           change();
-        }
-
-        }
-
+        }}
         className="w-1/2 px-3 py-2 rounded-lg mb-3 form-item"
       />
       {loading && (
@@ -109,9 +107,9 @@ const MySelect = ({ label, change, loading, ...props }) => {
       <select
         {...props}
         {...field}
-        onChange = {(e)=>{
-          field.onChange(e)
-          change()
+        onChange={(e) => {
+          field.onChange(e);
+          change();
         }}
         className="w-1/2 bg-slate-300 px-3 py-2 rounded-lg mb-3  form-item"
       ></select>
@@ -124,27 +122,40 @@ const MySelect = ({ label, change, loading, ...props }) => {
 
 const Me = () => {
   // const [userInfo, setUserInfo] = useState({});
-  const { user, isLoading, isError, isSuccess, message} = useSelector((state) => state.auth);
+  const { user, isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.auth
+  );
   const [change, setChange] = useState(false);
   const [updated, setUpdated] = useState(false);
-  const handleChange = ()=>{
+  const [image, setImage] = useState(
+    user.image
+      ? user.image
+      : "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/User_icon-cp.svg/1200px-User_icon-cp.svg.png"
+  );
+  const [imageFile, setImageFile] = useState(null);
+
+  const handleImageChange = (event) => {
+    if (event.target.files && event.target.files[0]) {
+      setImage(URL.createObjectURL(event.target.files[0]));
+      setImageFile(event.target.files[0]);
+      setChange(true);
+    }
+  };
+  const handleChange = () => {
     setChange(true);
-  }
-  const handleUpdateInfo = async(userChange)=>{
-    const response = await axios.put(API_URL_USER+user._id, userChange)
-    return response.data;
-  }
+  };
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  useEffect(()=>{
-    if(isError) {
+  useEffect(() => {
+    if (isError) {
       toast.error(message);
-   }
-   if(isSuccess){
-      toast.success("Update Successfully")
-      navigate("/")
-  }
-  },[user, isError, isSuccess, message, navigate, dispatch])
+    }
+    if (isSuccess) {
+      toast.success("Update Successfully");
+      navigate("/");
+    }
+  }, [user, isError, isSuccess, message, navigate, dispatch]);
   return (
     <StyledMeContainer className="container">
       <h1 className="text-center text-[var(--primary-color)] text-[46px] py-10">
@@ -153,16 +164,31 @@ const Me = () => {
       <div className="profile-container">
         <div>
           <div className="profile-img-box w-[300px] h-[300px] rounded-full border-8 border-cyan-500 mx-auto">
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/User_icon-cp.svg/1200px-User_icon-cp.svg.png"
-              alt="avatar"
-              className="w-full h-full rounded-full bg-[var(--primary-color)]"
-            />
+            <label htmlFor="image">
+              {user.image ? (
+                <img
+                  src={image}
+                  alt="avatar"
+                  className="w-full h-full rounded-full bg-[var(--primary-color)] cursor-pointer"
+                />
+              ) : (
+                <img
+                  src={image}
+                  alt="avatar"
+                  className="w-full h-full rounded-full bg-[var(--primary-color)] cursor-pointer"
+                />
+              )}
+              <input
+                type="file"
+                id="image"
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={handleImageChange}
+              />
+            </label>
           </div>
           <h2 className="text-center mt-[18px] font-medium text-xl">
-            
-              {user.username}
-            
+            {user.username}
           </h2>
         </div>
         <div className="information-account-wrapper">
@@ -175,12 +201,13 @@ const Me = () => {
               username: user.username || "",
               email: user.email || "",
               job: user.job || "",
+              image: imageFile || user.image || "",
             }}
             enableReinitialize
             validationSchema={Yup.object({
               fullname: Yup.string().required("required"),
               username: Yup.string().required("Required"),
-              email: Yup.string().required("Required")
+              email: Yup.string().required("Required"),
             })}
             onSubmit={(values) => {
               const userChange = {
@@ -188,47 +215,51 @@ const Me = () => {
                 username: values.username,
                 email: values.email,
                 job: values.job,
+                image: imageFile,
               };
-              dispatch(update({userChange: userChange,id: user._id}))
+              dispatch(update({ userChange: userChange, id: user._id }));
               // setUpdated(true);
-              setChange(false)
-              
+              setChange(false);
             }}
           >
             <Form className="form-wrapper flex flex-col ml-20">
               <MyInput
-                
                 label="Full name"
                 name="fullname"
                 id="fullname"
                 type="text"
-                change={()=>handleChange()}
+                change={() => handleChange()}
               ></MyInput>
               <MyInput
-                
                 label="Username"
                 name="username"
                 id="username"
                 type="text"
-                change={()=>handleChange()}
+                change={() => handleChange()}
               ></MyInput>
               <MyInput
-                
                 label="Email"
                 name="email"
                 id="email"
                 type="text"
-                change={()=>handleChange()}
+                change={() => handleChange()}
               ></MyInput>
-              <MySelect  label="Job" name="job" id="job" change={()=>handleChange()}>
+              <MySelect
+                label="Job"
+                name="job"
+                id="job"
+                change={() => handleChange()}
+              >
                 <option value="student">Student</option>
                 <option value="teacher">Teacher</option>
                 <option value="admin">Admin</option>
               </MySelect>
               <button
                 type="submit"
-                className={`w-[20%] flex-shrink-0 bg-[var(--primary-color)] text-white px-5 py-2 rounded-xl text-lg mt-10 ml-[30%] ${change?'': 'disable'} btn-save-profile`}
-                disabled = {!change}
+                className={`w-[20%] flex-shrink-0 bg-[var(--primary-color)] text-white px-5 py-2 rounded-xl text-lg mt-10 ml-[30%] ${
+                  change ? "" : "disable"
+                } btn-save-profile`}
+                disabled={!change}
               >
                 Save
               </button>
